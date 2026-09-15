@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pcp-reference-conformance"
+version = "0.1.0"
+description = "Reference state model and conformance checks for PCP v0.1"
+requires-python = ">=3.11"
+dependencies = [
+  "cryptography>=46,<47",
+  "jsonschema>=4.23,<5",
+]
+
+[tool.setuptools.packages.find]
+include = ["pcp_reference*"]

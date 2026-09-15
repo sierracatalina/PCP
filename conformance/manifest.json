@@ -1,0 +1,164 @@
+{
+  "spec_version": "pcp/0.1",
+  "type": "pcp_conformance_manifest",
+  "profile": "reference-core",
+  "expected_case_count": 26,
+  "cases": [
+    {
+      "id": "LEDGER-001",
+      "category": "ledger",
+      "test": "tests.test_ledger.LedgerTests.test_identical_reserve_replay_returns_original",
+      "assertion": "identical reserve replay returns the original reservation"
+    },
+    {
+      "id": "LEDGER-002",
+      "category": "ledger",
+      "test": "tests.test_ledger.LedgerTests.test_idempotency_key_cannot_change_request",
+      "assertion": "one idempotency key cannot authorize different request bytes"
+    },
+    {
+      "id": "LEDGER-003",
+      "category": "ledger",
+      "test": "tests.test_ledger.LedgerTests.test_concurrent_final_unit_has_one_winner",
+      "assertion": "two concurrent claims on the final unit produce one winner"
+    },
+    {
+      "id": "LEDGER-004",
+      "category": "ledger",
+      "test": "tests.test_ledger.LedgerTests.test_release_restores_budget_and_replay_is_stable",
+      "assertion": "a release restores uncommitted budget and replays idempotently"
+    },
+    {
+      "id": "LEDGER-005",
+      "category": "ledger",
+      "test": "tests.test_ledger.LedgerTests.test_commit_is_terminal_and_idempotent",
+      "assertion": "a commit is terminal and an identical commit replay is stable"
+    },
+    {
+      "id": "LEDGER-006",
+      "category": "ledger",
+      "test": "tests.test_ledger.LedgerTests.test_expiry_emits_release_and_requires_new_key",
+      "assertion": "reservation expiry creates a release event and prevents key reuse"
+    },
+    {
+      "id": "LEDGER-007",
+      "category": "ledger",
+      "test": "tests.test_ledger.LedgerTests.test_revocation_linearizes_with_reserve_and_blocks_execution",
+      "assertion": "revocation and reservation share an order and execution rechecks liveness"
+    },
+    {
+      "id": "PROOF-001",
+      "category": "proof",
+      "test": "tests.test_proof_and_receipts.DetachedProofTests.test_proof_round_trip_binds_exact_six_field_object",
+      "assertion": "the detached proof signs exactly five authority fields plus the unsigned envelope and derives a collision-free Legatus idempotency key"
+    },
+    {
+      "id": "PROOF-002",
+      "category": "proof",
+      "test": "tests.test_proof_and_receipts.DetachedProofTests.test_envelope_tamper_fails_binding",
+      "assertion": "an envelope change after signing fails the proof binding"
+    },
+    {
+      "id": "PROOF-003",
+      "category": "proof",
+      "test": "tests.test_proof_and_receipts.DetachedProofTests.test_signature_and_authority_errors_have_separate_lanes",
+      "assertion": "signature, authority, and availability failures use stable lanes"
+    },
+    {
+      "id": "PROOF-004",
+      "category": "proof",
+      "test": "tests.test_proof_and_receipts.DetachedProofTests.test_request_proof_copy_must_match_compact_signature",
+      "assertion": "the opaque verifier request proof equals the compact envelope proof"
+    },
+    {
+      "id": "PROOF-005",
+      "category": "proof",
+      "test": "tests.test_proof_and_receipts.DetachedProofTests.test_invalid_proof_family_maps_to_legatus_signature_lane",
+      "assertion": "malformed and mismatched proof variants map to the Legatus signature lane"
+    },
+    {
+      "id": "RECEIPT-001",
+      "category": "receipt",
+      "test": "tests.test_proof_and_receipts.ReceiptTests.test_signed_hash_chain_verifies",
+      "assertion": "signed receipts with correct predecessor digests verify"
+    },
+    {
+      "id": "RECEIPT-002",
+      "category": "receipt",
+      "test": "tests.test_proof_and_receipts.ReceiptTests.test_tampered_chain_fails",
+      "assertion": "an incorrect predecessor digest fails closed"
+    },
+    {
+      "id": "RECEIPT-003",
+      "category": "receipt",
+      "test": "tests.test_proof_and_receipts.ReceiptTests.test_duplicate_receipt_is_replay",
+      "assertion": "a duplicate receipt ID is detected as replay"
+    },
+    {
+      "id": "RECEIPT-004",
+      "category": "receipt",
+      "test": "tests.test_proof_and_receipts.ReceiptTests.test_correction_must_reference_an_earlier_receipt",
+      "assertion": "a correction can supersede only an earlier receipt in the same chain"
+    },
+    {
+      "id": "SCHEMA-001",
+      "category": "schema",
+      "test": "tests.test_schemas.SchemaTests.test_every_schema_is_valid_draft_2020_12",
+      "assertion": "every checked-in schema passes Draft 2020-12 meta-validation"
+    },
+    {
+      "id": "SCHEMA-002",
+      "category": "schema",
+      "test": "tests.test_schemas.SchemaTests.test_grant_validates_and_unknown_property_has_stable_code",
+      "assertion": "a grant validates, an extra property maps to unknown_property, and duplicate keys are rejected"
+    },
+    {
+      "id": "SCHEMA-003",
+      "category": "schema",
+      "test": "tests.test_schemas.SchemaTests.test_identity_kind_and_budget_units_are_semantic_invariants",
+      "assertion": "identity kind and duplicate budget unit invariants fail closed"
+    },
+    {
+      "id": "SCHEMA-004",
+      "category": "schema",
+      "test": "tests.test_schemas.SchemaTests.test_budget_command_shapes",
+      "assertion": "atomic budget command shapes validate"
+    },
+    {
+      "id": "SCHEMA-005",
+      "category": "schema",
+      "test": "tests.test_artifacts.ArtifactManifestTests.test_artifact_manifest_is_complete_and_matches_bytes",
+      "assertion": "the release artifact manifest covers every source artifact and matches its bytes"
+    },
+    {
+      "id": "SCHEMA-006",
+      "category": "schema",
+      "test": "tests.test_manifest.ManifestTests.test_manifest_has_one_loadable_test_per_case",
+      "assertion": "the case manifest has an exact denominator, unique identifiers, and loadable tests"
+    },
+    {
+      "id": "SCHEMA-007",
+      "category": "schema",
+      "test": "tests.test_artifacts.ArtifactManifestTests.test_clean_checkout_text_bytes_are_lf_stable",
+      "assertion": "a clean checkout uses LF bytes for every manifested text artifact"
+    },
+    {
+      "id": "INTEGRATION-001",
+      "category": "integration",
+      "test": "tests.test_schemas.SchemaTests.test_legatus_request_and_allow_result_validate",
+      "assertion": "Legatus verifier request and allow result match their strict schema"
+    },
+    {
+      "id": "INTEGRATION-002",
+      "category": "integration",
+      "test": "tests.test_schemas.SchemaTests.test_context_and_aaa_bindings_validate",
+      "assertion": "Context Layer and AAA bindings validate and preserve confirmation"
+    },
+    {
+      "id": "INTEGRATION-003",
+      "category": "integration",
+      "test": "tests.test_schemas.SchemaTests.test_legatus_finalization_distinguishes_commit_and_release",
+      "assertion": "Legatus finalization requires a journal position for commit and null for release"
+    }
+  ]
+}

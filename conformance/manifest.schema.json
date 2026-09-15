@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sierracatalina.com/pcp/v0.1/conformance-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "type", "profile", "expected_case_count", "cases"],
+  "properties": {
+    "spec_version": { "const": "pcp/0.1" },
+    "type": { "const": "pcp_conformance_manifest" },
+    "profile": { "const": "reference-core" },
+    "expected_case_count": { "type": "integer", "minimum": 1 },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "category", "test", "assertion"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Z]+-[0-9]{3}$" },
+          "category": {
+            "enum": ["ledger", "proof", "receipt", "schema", "integration"]
+          },
+          "test": { "type": "string", "minLength": 10 },
+          "assertion": { "type": "string", "minLength": 5, "maxLength": 240 }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "protocol": "AAA/0.1",
+  "version": "0.1.0",
+  "profile": "site",
+  "status": "active",
+  "live": true,
+  "http_action_api": "declared",
+  "last_updated": "2026-09-15",
+  "policy": {
+    "allow_autonomous_execution": false,
+    "require_human_approval_for": [],
+    "rate_limit": "60 requests/minute"
+  },
+  "discovery": {
+    "actions": "/.well-known/agents.json",
+    "context": "/.well-known/llms.txt"
+  },
+  "interaction_rules": {
+    "max_retries": 3,
+    "wait_for_selector_timeout": 5000,
+    "ignore_elements": []
+  },
+  "safety": {
+    "prohibit_direct_input_to": [],
+    "require_human_confirmation_for": ["settings.save"]
+  }
+}

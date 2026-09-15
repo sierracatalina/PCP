@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1.0",
+  "status": "active",
+  "live": true,
+  "http_action_api": "declared",
+  "service_name": "PCP AAA integration fixture",
+  "agent_card": {
+    "name": "Settings service",
+    "capabilities": ["settings.write"],
+    "endpoints": {
+      "discovery": "/.well-known/ai-instructions.json",
+      "action_root": "/settings"
+    }
+  },
+  "endpoints": [
+    {
+      "name": "settings.save",
+      "description": "Save one settings update.",
+      "path": "/settings/save",
+      "method": "POST",
+      "risk_level": "high",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false
+      }
+    }
+  ]
+}
