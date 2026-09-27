@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1 — 2026-09-27
+
+- Documented when `parser_record_forbidden`, `cl_type_forbidden`, and `recovery_is_not_a_grant` fire, and placed those codes in the conformance error precedence ahead of `unsupported_version` and `unknown_type`.
+- Stated that a hosting workspace, chat host, or agent host is a carrier, not an issuer.
+- Stated that an expired grant has no implicit renewal and no validity past `expires_at`, and that key rotation does not re-sign an issued grant.
+
 ## v0.1 — 2026-09-15
 
 - Defined a purpose-bound authority contract with scoped, expiring, revocable, and budgeted grants.

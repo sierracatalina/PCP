@@ -14,6 +14,8 @@ The kind field must match the URN. Reusing an ID across kinds returns <code>iden
 
 A signed grant supplies authority. Authentication only proves control of an identity or transport credential. Carrier handles, OAuth identities, MCP sessions, chat identities, and TLS peers require an explicit binding before they can present a PCP subject.
 
+A hosting workspace, chat host, or agent host is not an issuer. Carrying or hosting an agent confers no authority; only a principal-signed grant does. A host is a carrier, the same boundary as <code>carrier_is_not_authority</code>. Presenting the role <code>workspace</code>, <code>chat_host</code>, or <code>agent_host</code> as the issuer fails that code. A host is not a fourth identity kind.
+
 ## 2. Grant liveness
 
 An action is allowed only when all checks succeed:
@@ -27,6 +29,14 @@ An action is allowed only when all checks succeed:
 7. requested actions and resources contained by the grant scope;
 8. parent constraints satisfied for any child grant; and
 9. atomic budget reservation completed for every requested unit.
+
+The live interval in check 4 is half-open: <code>not_before</code> is inclusive and <code>expires_at</code> is exclusive. When <code>not_before</code> is null, the start is <code>issued_at</code>.
+
+### Expiry
+
+An expired grant is invalid. PCP has no implicit renewal. A receipt, a retry, a refresh, or a later observation does not move <code>expires_at</code>. Restoring authority requires a newly signed grant. Editing <code>expires_at</code> or any other grant byte without a new principal signature fails signature verification. The previous bytes remain the issued grant.
+
+v0.1 defines no clock-skew allowance and no wrap-up grace period. Verifiers MUST NOT extend validity past <code>expires_at</code> and MUST NOT treat a grant as live before its start.
 
 Signature verification alone establishes historical authenticity. It does not establish current liveness.
 
@@ -76,9 +86,15 @@ Every action that reaches a side effect produces a signed PCP receipt before suc
 
 Recovery restores the principal’s control of issuer keys. It never issues or extends a grant. Recovery rotates compromised keys and publishes an authoritative key revision. A deployment should revoke grant families created under a compromised key.
 
+### Key rotation
+
+A <code>pcp_recovery</code> or <code>pcp_key_rotation</code> object presented as a grant fails <code>recovery_is_not_a_grant</code>. Recovery never mints a grant.
+
+Key rotation leaves already-issued grant bytes unchanged. The verifier MUST NOT re-sign a grant in place. Grants issued after rotation are new documents signed with the new key. An already-issued grant still verifies under the key id in its signature while that key remains in the issuer’s published set. Removing that key fails <code>unknown_issuer</code>, as in [receipt-integrity.md](receipt-integrity.md). A published key with an invalid signature fails <code>bad_signature</code>.
+
 ## 10. Adjacent ownership
 
-- Context Layer owns private-context requests, disclosure policy, scoped bundles, writeback proposals, and its receipts.
+- Context Layer owns private-context requests, disclosure policy, scoped bundles, writeback proposals, and its receipts. A memory-parser record (<code>memory_parser_record</code>) or session receipt (<code>session_receipt</code>) is context. Presented as authority, it fails <code>parser_record_forbidden</code>. A Context Layer pass (<code>context_pass</code>), disclosure (<code>context_disclosure</code>), scoped bundle (<code>scoped_bundle</code>), or PCP context-authorization binding (<code>pcp_context_authorization</code>) authorizes asking for or receiving context, not acting. Presented as the grant, it fails <code>cl_type_forbidden</code>.
 - AAA owns discovery metadata and declared action surfaces.
 - Legatus owns coordination envelopes, clock, floor, causality, and transitions.
 - Product runtimes own planning, execution, and user experience.

@@ -18,6 +18,8 @@ The Context Layer policy engine validates both objects and the referenced PCP gr
 
 The resulting PCP receipt cites the Context Layer receipt ID and digest in `evidence_refs`. Raw context stays inside Context Layer’s authority boundary.
 
+Presenting a `context_pass`, `context_disclosure`, `scoped_bundle`, or this `pcp_context_authorization` object as the grant fails `cl_type_forbidden`. The binding authorizes the context request pairing, not the action.
+
 Schema: [`../schemas/pcp-context-authorization.schema.json`](../schemas/pcp-context-authorization.schema.json).
 
 ## 2. AAA
