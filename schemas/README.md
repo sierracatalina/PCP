@@ -24,7 +24,11 @@ Semantic checks that JSON Schema cannot express include:
 - subset and parent-budget rules for subdelegation;
 - canonical digest and signature verification;
 - revocation freshness;
-- ledger serialization and idempotency history; and
-- receipt-chain and cross-object reference integrity.
+- ledger serialization and idempotency history;
+- receipt-chain and cross-object reference integrity;
+- non-grant artifacts in the authority position (<code>parser_record_forbidden</code>, <code>cl_type_forbidden</code>, <code>recovery_is_not_a_grant</code>);
+- host roles rejected as issuers (<code>carrier_is_not_authority</code>);
+- the grant window <code>[not_before, expires_at)</code> with no skew grace and no in-place renewal; and
+- published-key membership for an issued signature (<code>unknown_issuer</code> when the key is removed).
 
 The reference package implements the cases named in the conformance manifest. The remaining semantic checks above are normative implementation obligations. Production implementations also need durable storage, complete RFC 8785 canonicalization, key custody, authenticated transport, and operational revocation.
