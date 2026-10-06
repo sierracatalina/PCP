@@ -1,10 +1,8 @@
 {
   "protocol": "AAA/0.1",
   "version": "0.1.0",
-  "profile": "site",
   "status": "active",
   "live": true,
-  "http_action_api": "declared",
   "last_updated": "2026-09-15",
   "policy": {
     "allow_autonomous_execution": false,
@@ -22,6 +20,12 @@
   },
   "safety": {
     "prohibit_direct_input_to": [],
-    "require_human_confirmation_for": ["settings.save"]
+    "require_human_confirmation_for": [
+      "settings.save"
+    ]
+  },
+  "extensions": {
+    "profile": "site",
+    "http_action_api": "declared"
   }
 }
