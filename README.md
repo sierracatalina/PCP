@@ -1,4 +1,4 @@
-# Personal Context Protocol (PCP) v0.1
+# Purpose-bound Capability Protocol (PCP) v0.1
 
 PCP is a draft authority contract for purpose-bound, scoped, expiring, revocable, and budgeted actions. This repository contains machine-readable schemas, a deterministic reference model, tests, and integration profiles. It contains no live issuer, production service, or private key.
 
