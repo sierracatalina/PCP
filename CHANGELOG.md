@@ -1,5 +1,13 @@
 # Changelog
 
+## task-4 tagged snapshot — 2026-10-07
+
+- Re-snapshotted both AAA schemas from annotated release tag `v0.1.0`
+  (tag object `6668f86947bb0fac6ca48efd99f7ec559b995bba`), verified to resolve
+  to merged commit `d5b6b5b806a6e68a5fe07af320dbc7ded9b31c29`.
+- Schema bytes and source hashes are unchanged from the reviewed commit snapshot.
+  Recorded release provenance and refreshed `ARTIFACTS.sha256`.
+
 ## task-4 review fixes — 2026-10-07
 
 - Re-snapshotted AAA schemas byte-for-byte from merged `main` commit

@@ -1,12 +1,11 @@
 # AAA integration fixtures
 
-> **No tagged AAA release exists** (rechecked 2026-10-07 via GitHub's
-> releases API, Git matching tag refs API, and `git ls-remote --tags`;
-> all returned empty). Re-snapshot from an official release tag when one
-> is published. The current snapshot pins the merged `main` commit below.
+Snapshot release: [AAA `v0.1.0`](https://github.com/sierracatalina/agent-aware-starter/tree/v0.1.0),
+published as an annotated tag on 2026-10-07. Tag object
+`6668f86947bb0fac6ca48efd99f7ec559b995bba` resolves to the merge commit below.
 
 `agents.schema.json` and `ai-instructions.schema.json` are byte-for-byte,
-test-only snapshots from Agent Aware Starter merge commit
+test-only snapshots freshly read from Agent Aware Starter tag `v0.1.0`, at merge commit
 [`d5b6b5b806a6e68a5fe07af320dbc7ded9b31c29`](https://github.com/sierracatalina/agent-aware-starter/commit/d5b6b5b806a6e68a5fe07af320dbc7ded9b31c29),
 which merged [AAA PR #4](https://github.com/sierracatalina/agent-aware-starter/pull/4)
 on 2026-10-07. These schema bytes are identical to reviewed PR head
