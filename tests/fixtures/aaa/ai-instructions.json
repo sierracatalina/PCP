@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "status": "active",
   "live": true,
+  "http_action_api": "declared",
   "last_updated": "2026-09-15",
   "policy": {
     "allow_autonomous_execution": false,
@@ -25,7 +26,6 @@
     ]
   },
   "extensions": {
-    "profile": "site",
-    "http_action_api": "declared"
+    "profile": "site"
   }
 }

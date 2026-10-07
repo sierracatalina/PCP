@@ -1,5 +1,22 @@
 # Changelog
 
+## task-4 review fixes — 2026-10-07
+
+- Re-snapshotted AAA schemas byte-for-byte from merged `main` commit
+  `d5b6b5b806a6e68a5fe07af320dbc7ded9b31c29` (AAA PR #4 head
+  `8cf515b5f16685d1d1da6b56088990d79bade3fd` has identical schema bytes),
+  including the strict `out_of_settings_actions` definition. AAA release and
+  tag checks remain empty; the snapshot records an immutable commit pin.
+- Restored `http_action_api: "declared"` to the fixture instructions document's
+  top level so it passes PCP's existing AAA binding validation. Vendor-specific
+  `profile` remains under `extensions`; upstream schemas remain unmodified.
+- Added regression coverage for declaration placement, strict vendor extensions,
+  merged-schema action metadata, and schema-valid extension-only declarations
+  rejected by binding validation. Both autonomy-advisory values preserve grant
+  scope and confirmation requirements; principal-signed grants remain the sole
+  source of action authority.
+- Updated snapshot provenance, source SHA-256 hashes, and `ARTIFACTS.sha256`.
+
 ## task-4 — 2026-10-06
 
 - Re-snapshotted `tests/fixtures/aaa/` schemas from Agent Aware Starter
