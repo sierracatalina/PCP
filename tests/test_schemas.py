@@ -73,6 +73,43 @@ class SchemaTests(unittest.TestCase):
             with self.subTest(path=path.name):
                 Draft202012Validator.check_schema(json.loads(path.read_text(encoding="utf-8")))
 
+    def test_aaa_fixtures_keep_declarations_and_vendor_extensions_separate(self):
+        for name in ("agents", "ai-instructions"):
+            with self.subTest(document=name):
+                schema = load_aaa(f"{name}.schema.json")
+                Draft202012Validator.check_schema(schema)
+                document = load_aaa(f"{name}.json")
+                self.assert_valid(schema, document)
+                self.assertEqual("declared", document.get("http_action_api"))
+                self.assertNotIn("http_action_api", document.get("extensions", {}))
+
+                document["vendor_extra"] = {"enabled": True}
+                self.assertTrue(list(validator(schema).iter_errors(document)))
+                document.setdefault("extensions", {})["vendor_extra"] = document.pop("vendor_extra")
+                self.assert_valid(schema, document)
+
+        instructions = load_aaa("ai-instructions.json")
+        self.assertEqual("site", instructions["extensions"]["profile"])
+        instructions["profile"] = instructions["extensions"].pop("profile")
+        self.assertTrue(list(validator(load_aaa("ai-instructions.schema.json")).iter_errors(instructions)))
+
+    def test_aaa_snapshot_supports_strict_out_of_settings_actions(self):
+        schema = load_aaa("ai-instructions.schema.json")
+        instructions = load_aaa("ai-instructions.json")
+        action = {
+            "id": "document.export",
+            "how_to": "Open the export dialog.",
+            "requires_human_confirmation": True,
+        }
+        instructions["out_of_settings_actions"] = [action]
+        self.assert_valid(schema, instructions)
+        action["vendor_extra"] = True
+        self.assertTrue(list(validator(schema).iter_errors(instructions)))
+        action["extensions"] = {"vendor_extra": action.pop("vendor_extra")}
+        self.assert_valid(schema, instructions)
+        action["requires_human_confirmation"] = "yes"
+        self.assertTrue(list(validator(schema).iter_errors(instructions)))
+
     def test_grant_validates_and_unknown_property_has_stable_code(self):
         schema = self.core_definition("grant")
         self.assert_valid(schema, grant())
@@ -305,6 +342,47 @@ class SchemaTests(unittest.TestCase):
         schema = load("pcp-aaa-action-binding.schema.json")
         self.assert_valid(schema, aaa)
         validate_aaa_binding(aaa, agents_document, instructions_document, aaa_grant)
+
+        # Schema validity alone does not establish the PCP binding contract.
+        for label, document, digest_field in (
+            ("agents", agents_document, "discovery_document_digest"),
+            ("instructions", instructions_document, "instructions_document_digest"),
+        ):
+            with self.subTest(extension_only_declaration=label):
+                changed_document = copy.deepcopy(document)
+                changed_document.setdefault("extensions", {})["http_action_api"] = changed_document.pop("http_action_api")
+                fixture_name = "agents" if label == "agents" else "ai-instructions"
+                self.assert_valid(load_aaa(f"{fixture_name}.schema.json"), changed_document)
+                changed_binding = copy.deepcopy(aaa)
+                changed_binding[digest_field] = digest(changed_document)
+                with self.assertRaises(ProtocolError) as denied:
+                    validate_aaa_binding(
+                        changed_binding,
+                        changed_document if label == "agents" else agents_document,
+                        changed_document if label == "instructions" else instructions_document,
+                        aaa_grant,
+                    )
+                self.assertEqual("grant_binding_mismatch", denied.exception.code)
+                self.assertIn(f"AAA {label} document must declare the HTTP action API", str(denied.exception))
+
+        # Both advisory values preserve grant scope and confirmation requirements.
+        for advisory in (False, True):
+            with self.subTest(allow_autonomous_execution=advisory):
+                advisory_instructions = copy.deepcopy(instructions_document)
+                advisory_instructions["policy"]["allow_autonomous_execution"] = advisory
+                self.assert_valid(load_aaa("ai-instructions.schema.json"), advisory_instructions)
+                advisory_binding = copy.deepcopy(aaa)
+                advisory_binding["instructions_document_digest"] = digest(advisory_instructions)
+                validate_aaa_binding(advisory_binding, agents_document, advisory_instructions, aaa_grant)
+                for invalid_grant in ({}, {**aaa_grant, "scope": {"actions": [], "resources": []}}):
+                    with self.assertRaises(ProtocolError) as denied:
+                        validate_aaa_binding(advisory_binding, agents_document, advisory_instructions, invalid_grant)
+                    self.assertEqual("grant_binding_mismatch", denied.exception.code)
+                advisory_binding["confirmation_receipt_id"] = None
+                with self.assertRaises(ProtocolError) as denied:
+                    validate_aaa_binding(advisory_binding, agents_document, advisory_instructions, aaa_grant)
+                self.assertEqual("grant_binding_mismatch", denied.exception.code)
+
         missing_confirmation = copy.deepcopy(aaa)
         missing_confirmation["confirmation_receipt_id"] = None
         self.assertTrue(list(validator(schema).iter_errors(missing_confirmation)))

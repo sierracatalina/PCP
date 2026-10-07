@@ -1,7 +1,6 @@
 {
   "protocol": "AAA/0.1",
   "version": "0.1.0",
-  "profile": "site",
   "status": "active",
   "live": true,
   "http_action_api": "declared",
@@ -22,6 +21,11 @@
   },
   "safety": {
     "prohibit_direct_input_to": [],
-    "require_human_confirmation_for": ["settings.save"]
+    "require_human_confirmation_for": [
+      "settings.save"
+    ]
+  },
+  "extensions": {
+    "profile": "site"
   }
 }

@@ -1,154 +1,141 @@
 {
+  "$comment": "Strict since task-4: additionalProperties is false at every object level; vendor-specific extras belong in a single 'extensions' object.",
+  "$id": "https://protocol.aaa.example/schemas/agents.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:aaa:schema:agents:0.1",
-  "title": "AAA agents.json",
-  "type": "object",
   "additionalProperties": false,
-  "required": [
-    "schema_version",
-    "status",
-    "live",
-    "http_action_api",
-    "agent_card"
-  ],
   "properties": {
-    "schema_version": {
-      "const": "0.1.0"
+    "agent_card": {
+      "additionalProperties": false,
+      "properties": {
+        "capabilities": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "endpoints": {
+          "additionalProperties": false,
+          "properties": {
+            "action_root": {
+              "anyOf": [
+                {
+                  "const": "none",
+                  "type": "string"
+                },
+                {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              ],
+              "$comment": "Was oneOf; 'none' matched both branches so the settings profile value required by spec 00 invariant 2 could never validate. anyOf keeps the intent."
+            },
+            "discovery": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "extensions": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "discovery",
+            "action_root"
+          ],
+          "type": "object"
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "capabilities",
+        "endpoints"
+      ],
+      "type": "object"
     },
-    "status": {
-      "enum": ["example", "draft", "active", "deprecated"]
+    "endpoints": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "extensions": {
+            "type": "object"
+          },
+          "method": {
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "PATCH",
+              "DELETE",
+              "HEAD",
+              "OPTIONS"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "path": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "risk_level": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "path",
+          "method"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "extensions": {
+      "type": "object"
+    },
+    "http_action_api": {
+      "type": "string"
     },
     "live": {
       "type": "boolean"
     },
-    "http_action_api": {
-      "enum": ["none", "declared"]
-    },
     "notes": {
-      "type": "string",
-      "maxLength": 1000
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "type": "string"
     },
     "service_name": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 200
+      "type": "string"
     },
-    "agent_card": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["name", "capabilities", "endpoints"],
-      "properties": {
-        "name": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 200
-        },
-        "capabilities": {
-          "type": "array",
-          "maxItems": 100,
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "pattern": "^[a-z][a-z0-9.-]{0,99}$"
-          }
-        },
-        "endpoints": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["discovery", "action_root"],
-          "properties": {
-            "discovery": {
-              "$ref": "#/$defs/pathOrHttpsUrl"
-            },
-            "context": {
-              "$ref": "#/$defs/pathOrHttpsUrl"
-            },
-            "action_root": {
-              "anyOf": [
-                { "const": "none" },
-                { "$ref": "#/$defs/pathOrHttpsUrl" }
-              ]
-            }
-          }
-        }
-      }
-    },
-    "endpoints": {
-      "type": "array",
-      "minItems": 1,
-      "maxItems": 100,
-      "items": {
-        "$ref": "#/$defs/action"
-      }
+    "status": {
+      "type": "string"
     }
   },
-  "allOf": [
-    {
-      "if": {
-        "properties": {
-          "agent_card": {
-            "properties": {
-              "endpoints": {
-                "properties": {
-                  "action_root": { "const": "none" }
-                },
-                "required": ["action_root"]
-              }
-            },
-            "required": ["endpoints"]
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "http_action_api": { "const": "none" }
-        },
-        "not": { "required": ["endpoints"] }
-      },
-      "else": {
-        "properties": {
-          "http_action_api": { "const": "declared" }
-        },
-        "required": ["endpoints"]
-      }
-    }
+  "required": [
+    "schema_version",
+    "agent_card"
   ],
-  "$defs": {
-    "pathOrHttpsUrl": {
-      "type": "string",
-      "maxLength": 2048,
-      "anyOf": [
-        { "pattern": "^/(?!/)(?!.*\\.\\.)(?!.*#)[^\\s]*$" },
-        { "pattern": "^https://(?![^/]*@)[^\\s#]+$" }
-      ]
-    },
-    "action": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["name", "description", "path", "method", "risk_level"],
-      "properties": {
-        "name": {
-          "type": "string",
-          "pattern": "^[a-z][a-z0-9._-]{0,99}$"
-        },
-        "description": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 1000
-        },
-        "path": {
-          "$ref": "#/$defs/pathOrHttpsUrl"
-        },
-        "method": {
-          "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]
-        },
-        "risk_level": {
-          "enum": ["low", "medium", "high"]
-        },
-        "parameters": {
-          "type": "object"
-        }
-      }
-    }
-  }
+  "title": "AAA agents.json",
+  "type": "object"
 }
