@@ -1,5 +1,11 @@
 # Changelog
 
+## Purpose-bound Capability Protocol name — 2026-10-07
+
+- Implemented the decided PCP expansion in the README, core schema title, and
+  package description. PCP abbreviation, wire identifiers, schema IDs, and
+  validation rules are unchanged. Refreshed the release artifact inventory.
+
 ## task-4 tagged snapshot — 2026-10-07
 
 - Re-snapshotted both AAA schemas from annotated release tag `v0.1.0`

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pcp-reference-conformance"
 version = "0.1.0"
-description = "Reference state model and conformance checks for PCP v0.1"
+description = "Reference state model and conformance checks for Purpose-bound Capability Protocol v0.1"
 requires-python = ">=3.11"
 dependencies = [
   "cryptography>=46,<47",
