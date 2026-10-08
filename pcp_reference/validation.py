@@ -165,7 +165,8 @@ def require_grant_window(grant: dict[str, object], now: datetime) -> None:
 def rotate_published_keys(published_key_ids: Iterable[str], new_key_id: str) -> list[str]:
     """Publish ``new_key_id`` without rewriting already issued grants."""
 
-    if not isinstance(new_key_id, str) or _KEY_ID.fullmatch(new_key_id) is None:
+    if (not isinstance(new_key_id, str) or len(new_key_id) > 256
+            or _KEY_ID.fullmatch(new_key_id) is None):
         raise ProtocolError("malformed", "rotated key id is malformed")
     keys = list(published_key_ids)
     if new_key_id not in keys:
@@ -176,7 +177,8 @@ def rotate_published_keys(published_key_ids: Iterable[str], new_key_id: str) -> 
 def require_published_signing_key(published_key_ids: Iterable[str], key_id: object) -> None:
     """A removed signing key is ``unknown_issuer``. A bad key id is ``malformed``."""
 
-    if not isinstance(key_id, str) or _KEY_ID.fullmatch(key_id) is None:
+    if (not isinstance(key_id, str) or len(key_id) > 256
+            or _KEY_ID.fullmatch(key_id) is None):
         raise ProtocolError("malformed", "signing key id is malformed")
     if key_id not in set(published_key_ids):
         raise ProtocolError("unknown_issuer", "signing key is not in the published issuer set")
