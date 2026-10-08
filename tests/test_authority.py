@@ -145,3 +145,28 @@ class AuthorityTests(unittest.TestCase):
         self.assertNotEqual(before, canonical_bytes(reissued))
         verify_record(reissued, second_key().public_key())
         require_published_signing_key(published, NEW_KEY_ID)
+
+    def test_key_id_schema_length_boundary(self):
+        prefix = "urn:pcp:key:"
+        boundary = prefix + "a" * (256 - len(prefix))
+        published = rotate_published_keys([KEY_ID], boundary)
+        self.assertEqual([KEY_ID, boundary], published)
+        self.assertEqual(published, rotate_published_keys(published, boundary))
+        require_published_signing_key(published, boundary)
+        with self.assertRaises(ProtocolError) as absent:
+            require_published_signing_key([], boundary)
+        self.assertEqual("unknown_issuer", absent.exception.code)
+
+        for size in (257, 1024):
+            key_id = prefix + "a" * (size - len(prefix))
+            with self.subTest(size=size):
+                before = published[:]
+                with self.assertRaises(ProtocolError) as rotation:
+                    rotate_published_keys(published, key_id)
+                self.assertEqual("malformed", rotation.exception.code)
+                self.assertEqual(before, published)
+                for keys in ([], [key_id]):
+                    with self.subTest(published=bool(keys)):
+                        with self.assertRaises(ProtocolError) as signing:
+                            require_published_signing_key(keys, key_id)
+                        self.assertEqual("malformed", signing.exception.code)
